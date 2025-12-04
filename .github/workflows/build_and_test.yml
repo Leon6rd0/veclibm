@@ -59,7 +59,7 @@ jobs:
 
       - name: Create sysroot
         run: |
-          sudo debootstrap --arch=riscv64 --verbose --include=fakeroot,symlinks,googletest --resolve-deps --variant=minbase --components=main,universe jammy sysroot
+          sudo debootstrap --arch=riscv64 --verbose --include=fakeroot,symlinks,googletest --resolve-deps --variant=minbase --components=main,universe noble sysroot
           # Remove unused files to minimize cache
           sudo chroot sysroot symlinks -cr .
           sudo chown ${USER} -R sysroot
