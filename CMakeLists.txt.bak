@@ -5,20 +5,16 @@
 cmake_minimum_required(VERSION 3.22)
 project(veclibm C CXX)
 
-# [关键修正] 全局开启 RISC-V Vector 扩展支持
-# 如果不加这行，编译 intrinsic 代码时会报 unknown type/function 错误
-add_compile_options(-march=rv64gcv)
-
 option(VECLIBM_BUILD_TESTS "Build tests" ON)
 
 if (VECLIBM_BUILD_TESTS)
     # Adds a test target
     include(CTest)
+
     include(GoogleTest)
 
-    # [关键修正] 删除了 set(GTest_ROOT ...)，改为直接查找系统库
-    # 这会利用你拷贝到 /usr/lib/cmake/GTest 里的配置文件
-    find_package(GTest REQUIRED)
+    set(GTest_ROOT ${CMAKE_SYSROOT}/usr/src/googletest/googletest)
+    add_subdirectory(${GTest_ROOT} "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
 endif()
 
 set(PROJECT_SOURCES
@@ -110,7 +106,7 @@ set(PROJECT_SOURCES
     src/rvvlm_tgammaDI.c
 )
 
-add_library(vecm SHARED
+add_library(vecm
     ${PROJECT_SOURCES}
 )
 
@@ -124,11 +120,8 @@ target_compile_options(vecm
     $<$<COMPILE_LANGUAGE:C>:-std=c11>
 )
 
-# [建议添加] 安装规则，方便 cmake --install
-install(TARGETS vecm DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
-
 if (VECLIBM_BUILD_TESTS)
-    # Add tests as well. Split this out into its own file.
+    # Add tests as well. Split this out into its own file. This means that the tests
+    # are in a 'test' subdirectory of the current build directory
     add_subdirectory(test)
 endif()
