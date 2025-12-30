@@ -12,13 +12,18 @@ add_compile_options(-march=rv64gcv)
 option(VECLIBM_BUILD_TESTS "Build tests" ON)
 
 if (VECLIBM_BUILD_TESTS)
-    # Adds a test target
     include(CTest)
-    include(GoogleTest)
 
-    # [关键修正] 删除了 set(GTest_ROOT ...)，改为直接查找系统库
-    # 这会利用你拷贝到 /usr/lib/cmake/GTest 里的配置文件
-    find_package(GTest REQUIRED)
+    # 告诉 CMake 不要安装 GoogleTest 的库文件到系统中（只给自己用）
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    set(INSTALL_GMOCK OFF CACHE BOOL "" FORCE)
+
+    # 添加子目录：告诉 CMake 源码在哪里
+    # 假设你的文件夹叫 "googletest"
+    # EXCLUDE_FROM_ALL 防止 make install 时把 gtest 也装了
+    add_subdirectory(googletest EXCLUDE_FROM_ALL)
+    
+    # 此时，CMake 已经有了 'gtest' 和 'gtest_main' 这两个 Target
 endif()
 
 set(PROJECT_SOURCES

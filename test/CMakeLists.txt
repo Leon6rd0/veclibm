@@ -97,6 +97,7 @@ target_include_directories(test_veclibm
 target_link_libraries(test_veclibm
     vecm
     GTest::gtest_main
+    m
 )
 
 target_compile_options(test_veclibm
