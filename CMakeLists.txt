@@ -13,7 +13,8 @@ option(VECLIBM_BUILD_TESTS "Build tests" ON)
 
 if (VECLIBM_BUILD_TESTS)
     include(CTest)
-
+    
+    include(GoogleTest)
     # 告诉 CMake 不要安装 GoogleTest 的库文件到系统中（只给自己用）
     set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
     set(INSTALL_GMOCK OFF CACHE BOOL "" FORCE)
